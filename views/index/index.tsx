@@ -5,7 +5,9 @@ import Sidebar from 'views/components/sidebar';
 import postAPI from 'common/api/postAPI';
 import { PagedPosts, Post } from 'share/interfaces/post';
 import MoodCalendar from './mood-calendar';
-import PostList from 'views/components/post-list';
+import DiaryBox from 'views/components/post-list/diary-box';
+import { usePagedPosts } from 'views/components/post-list/hooks';
+import ReactPaginate from 'react-paginate';
 import EmptyBox from 'views/components/post-list/empty-box';
 
 interface IndexPageProps {
@@ -14,6 +16,8 @@ interface IndexPageProps {
 }
 
 const IndexPage: NextPage<IndexPageProps> = ({ initialPosts, total }) => {
+  const { pageCount, changePage, pagedPosts } = usePagedPosts({ initialPosts, total });
+
   return (
     <Layout>
       <Sidebar />
@@ -24,11 +28,31 @@ const IndexPage: NextPage<IndexPageProps> = ({ initialPosts, total }) => {
 
         <S.DiaryListContainer>
           <S.Diaryinfo>목록 보기</S.Diaryinfo>
-          {initialPosts.length ? (
-            <PostList initialPosts={initialPosts} total={total} />
-          ) : (
-            <EmptyBox />
-          )}
+          <S.DiaryListContainer>
+            <S.DiaryBoxContainer>
+              {pagedPosts.length ? (
+                pagedPosts.map((post) => {
+                  return <DiaryBox key={post.id} post={post} />;
+                })
+              ) : (
+                <EmptyBox />
+              )}
+            </S.DiaryBoxContainer>
+            <S.Pgbox>
+              {pageCount > 0 && (
+                <ReactPaginate
+                  pageRangeDisplayed={2}
+                  marginPagesDisplayed={3}
+                  previousLabel={'이전'}
+                  nextLabel={'다음'}
+                  pageCount={pageCount}
+                  onPageChange={changePage}
+                  containerClassName={'pagebtn'}
+                  activeClassName={'page_active_btn'}
+                />
+              )}
+            </S.Pgbox>
+          </S.DiaryListContainer>
         </S.DiaryListContainer>
       </S.Mainpage>
     </Layout>
