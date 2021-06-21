@@ -8,6 +8,9 @@
 
 ## 실행
 
+- you need `.env.development` or `.env.production` file
+- https://github.com/swimme/react-diary-client/issues/12
+
 ```
 $ yarn install
 $ yarn build:server
